@@ -93,5 +93,11 @@ public class Lab7 {
     private void runAnalysis(){
         // TODO
         helper.getAverageLikesPerCommets();
+        helper.getPostWithMostLikes();
+        helper.getPostWithMostComments();
+        helper.getTopFiveInactiveUserBasedOnPosts();
+        helper.getTopFiveInactiveUserBasedOnComments();
+        helper.getTopFiveInactiveUsersOverall();
+        helper.getTopFiveProactiveUsersOverall();
     }
 }
