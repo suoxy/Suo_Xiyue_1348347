@@ -38,7 +38,7 @@ public abstract class Role {
     }
     
     public abstract JPanel createWorkArea(JPanel userProcessContainer, 
-            UserAccount account,  
+            UserAccount account,
             EcoSystem business);
 
     @Override

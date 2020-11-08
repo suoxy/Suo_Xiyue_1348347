@@ -1,8 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+// xiyue s
+
 package Business;
 
 
@@ -20,6 +17,8 @@ import java.util.ArrayList;
 public class EcoSystem extends Organization{
     
     private static EcoSystem business;
+    private ArrayList<Organization> organizationList;
+    
     private RestaurantDirectory restaurantDirectory;
     private CustomerDirectory customerDirectory;
     private DeliveryManDirectory deliveryManDirectory;
@@ -37,7 +36,7 @@ public class EcoSystem extends Organization{
         }
         return business;
     }
-    
+      
     @Override
     public ArrayList<Role> getSupportedRole() {
         ArrayList<Role> roleList=new ArrayList<Role>();
@@ -46,9 +45,28 @@ public class EcoSystem extends Organization{
     }
     private EcoSystem(){
         super(null);
-       // networkList=new ArrayList<Network>();
+        organizationList = new ArrayList<Organization>();
     }
 
+    public ArrayList<Organization> getOrganizationList() {
+        return organizationList;
+    }
+
+    public RestaurantDirectory getRestaurantDirectory() {
+        return restaurantDirectory;
+    }
+
+    public CustomerDirectory getCustomerDirectory() {
+        return customerDirectory;
+    }
+
+    public DeliveryManDirectory getDeliveryManDirectory() {
+        return deliveryManDirectory;
+    }
+
+    public static EcoSystem getBusiness() {
+        return business;
+    }
     
     public boolean checkIfUserIsUnique(String userName){
        //

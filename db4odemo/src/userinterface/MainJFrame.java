@@ -1,17 +1,26 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
+// Xiyue Suo 
+// Infor 5100 Assignment 5
+
 package userinterface;
 
+import Business.CustomerAdminOrg;
 import Business.EcoSystem;
 import Business.DB4OUtil.DB4OUtil;
+import Business.Employee.Employee;
 
 import Business.Organization;
+import Business.OrganizationDir;
+import Business.Role.CustomerRole;
 import Business.UserAccount.UserAccount;
 import java.awt.CardLayout;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import userinterface.CustomerRole.CustomerAreaJPanel;
+import userinterface.DeliveryManRole.DeliveryManWorkAreaJPanel;
+import userinterface.RestaurantAdminRole.AdminWorkAreaJPanel;
+import userinterface.SystemAdminWorkArea.SystemAdminWorkAreaJPanel;
 
 /**
  *
@@ -24,11 +33,41 @@ public class MainJFrame extends javax.swing.JFrame {
      */
     private EcoSystem system;
     private DB4OUtil dB4OUtil = DB4OUtil.getInstance();
+    
+    private UserAccount userAccount; 
+    private static EcoSystem business;
 
     public MainJFrame() {
         initComponents();
         system = dB4OUtil.retrieveSystem();
-        this.setSize(1680, 1050);
+        
+        //Employee customer = new Employee();
+//        Employee delivery = new Employee();
+//        Employee admin  = new Employee();
+        //customer.setName("cus");
+//        delivery.setName("deli");
+//        admin.setName("admin");
+        
+        //system.getUserAccountDirectory().createUserAccount("cus", "1", customer, new CustomerRole());
+        
+        // test
+        System.out.println("hello");
+        
+        
+        //system.getOrganizationList().add(new CustomerAdminOrg());
+        
+        //ArrayList<Organization> ol = system.getOrganizationList();
+        //CustomerAdminOrg c = new CustomerAdminOrg();
+        //ol.add(c);     
+        //System.out.println(ol);
+        
+        System.out.println(system.getOrganizationList().size());
+        //System.out.println("organization list size : " + ol.size());
+        System.out.println(("employee list: " + system.getEmployeeDirectory().getEmployeeList().toString()));
+        System.out.println("user accout dir: " + system.getUserAccountDirectory().getUserAccountList());
+                // delete above
+        
+        this.setSize(900, 700);
     }
 
     /**
@@ -43,7 +82,7 @@ public class MainJFrame extends javax.swing.JFrame {
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
         loginJButton = new javax.swing.JButton();
-        userNameJTextField = new javax.swing.JTextField();
+        txtUser = new javax.swing.JTextField();
         passwordField = new javax.swing.JPasswordField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -83,7 +122,7 @@ public class MainJFrame extends javax.swing.JFrame {
                         .addComponent(passwordField, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
                         .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(userNameJTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(txtUser, javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                             .addComponent(logoutJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
                             .addGap(26, 26, 26)
@@ -97,7 +136,7 @@ public class MainJFrame extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(userNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(14, 14, 14)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -123,16 +162,71 @@ public class MainJFrame extends javax.swing.JFrame {
 
     private void loginJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginJButtonActionPerformed
         // Get user name
+        String userName = txtUser.getText();
+        
+        // get password
+        char[] passwordCharArray = passwordField.getPassword();
+        String password = String.valueOf(passwordCharArray);
+        
+        UserAccount userAccount = system.getUserAccountDirectory().authenticateUser(userName, password);
+        Organization inOrganization = null;
+        
+//        if (userAccount == null) {
+//                for (Organization organization : network.getOrganizationDir().getOrganizationList()) {   
+//                    userAccount =organization.getUserAccountDirectory().authenticateUser(userName, password);
+//                    if (userAccount != null) {
+//                        inOrganization = organization;
+//                    }
+//                }       
+//        }
+
+         if (userAccount == null) {
+             JOptionPane.showMessageDialog(null, "illegal username");
+             return;
+         } else {
+            CardLayout layout = (CardLayout) container.getLayout();
+            container.add("workArea", userAccount.getRole().createWorkArea(container, userAccount, system));
+            layout.next(container);
+         }
+        
+        
+        
+        
+//        if (userName.equalsIgnoreCase("sys")) {
+//            SystemAdminWorkAreaJPanel sawajp = new SystemAdminWorkAreaJPanel(container, system);
+//            container.add("SystemAdminWorkAreaJPanel", sawajp);
+//            CardLayout layout = (CardLayout) container.getLayout();
+//            layout.next(container);
+//        } else if (userName == "res") {
+//            AdminWorkAreaJPanel restManager = new AdminWorkAreaJPanel(container);
+//            container.add("AdminWorkAreaJPanel", restManager);
+//            CardLayout layout = (CardLayout) container.getLayout();
+//            layout.next(container);
+//        } else if (userName == "deli") {
+//            DeliveryManWorkAreaJPanel dmwajp = new DeliveryManWorkAreaJPanel(container, userAccount, business);
+//            container.add("DeliveryManWorkAreaJPanel", dmwajp);
+//            CardLayout layout = (CardLayout) container.getLayout();
+//            layout.next(container);
+//        } else if (userName == "cus") {
+//            CustomerAreaJPanel cajp = new CustomerAreaJPanel(container, userAccount);
+//            container.add("CustomerAreaJPanel", cajp);
+//            CardLayout layout = (CardLayout) container.getLayout();
+//            layout.next(container);
+//        } else {
+//             JOptionPane.showMessageDialog(null, "illegal user name");
+//        }
        
+       loginJButton.setEnabled(false);
+       logoutJButton.setEnabled(true);
     }//GEN-LAST:event_loginJButtonActionPerformed
 
     private void logoutJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutJButtonActionPerformed
         logoutJButton.setEnabled(false);
-        userNameJTextField.setEnabled(true);
+        txtUser.setEnabled(true);
         passwordField.setEnabled(true);
         loginJButton.setEnabled(true);
 
-        userNameJTextField.setText("");
+        txtUser.setText("");
         passwordField.setText("");
 
         container.removeAll();
@@ -187,6 +281,6 @@ public class MainJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel loginJLabel;
     private javax.swing.JButton logoutJButton;
     private javax.swing.JPasswordField passwordField;
-    private javax.swing.JTextField userNameJTextField;
+    private javax.swing.JTextField txtUser;
     // End of variables declaration//GEN-END:variables
 }
