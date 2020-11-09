@@ -169,16 +169,17 @@ public class MainJFrame extends javax.swing.JFrame {
         String password = String.valueOf(passwordCharArray);
         
         UserAccount userAccount = system.getUserAccountDirectory().authenticateUser(userName, password);
-        Organization inOrganization = null;
+        Organization inOrg = null;
         
-//        if (userAccount == null) {
-//                for (Organization organization : network.getOrganizationDir().getOrganizationList()) {   
-//                    userAccount =organization.getUserAccountDirectory().authenticateUser(userName, password);
-//                    if (userAccount != null) {
-//                        inOrganization = organization;
-//                    }
-//                }       
-//        }
+        if (userAccount == null) {
+            for (Organization org : system.getOrganizationList()) {
+                userAccount = org.getUserAccountDirectory().authenticateUser(userName, password);
+                if (userAccount != null) {
+                    inOrg = org;
+                    break;
+                }
+            }            
+        }   
 
          if (userAccount == null) {
              JOptionPane.showMessageDialog(null, "illegal username");

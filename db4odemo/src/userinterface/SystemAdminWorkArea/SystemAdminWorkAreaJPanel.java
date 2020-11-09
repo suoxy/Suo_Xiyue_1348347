@@ -8,6 +8,8 @@ package userinterface.SystemAdminWorkArea;
 import Business.EcoSystem;
 
 import Business.Organization;
+import Business.UserAccount.UserAccount;
+import Business.UserAccount.UserAccountDirectory;
 import java.awt.CardLayout;
 import java.util.ArrayList;
 import javax.swing.JPanel;
@@ -24,12 +26,12 @@ public class SystemAdminWorkAreaJPanel extends javax.swing.JPanel {
      * Creates new form SystemAdminWorkAreaJPanel
      */
     JPanel userProcessContainer;
-    EcoSystem ecosystem;
+    EcoSystem system;
     
     public SystemAdminWorkAreaJPanel(JPanel userProcessContainer,EcoSystem business) {
         initComponents();
         this.userProcessContainer=userProcessContainer;
-        this.ecosystem= business;
+        this.system= business;
         populateTree();
     }
     
@@ -37,8 +39,11 @@ public class SystemAdminWorkAreaJPanel extends javax.swing.JPanel {
         DefaultTreeModel model=(DefaultTreeModel)jTree.getModel();
         // Add the code for draw your system structure shown by JTree
         
-       // ArrayList<Organization> orgList = ecosystem.getOrganizationList();
-        Organization organization;
+        ArrayList<Organization> orgList = system.getOrganizationList();
+        Organization org;
+        
+        ArrayList<UserAccount> uad;
+        UserAccount ua;
         
         
         DefaultMutableTreeNode root=(DefaultMutableTreeNode)model.getRoot();
@@ -46,13 +51,22 @@ public class SystemAdminWorkAreaJPanel extends javax.swing.JPanel {
         DefaultMutableTreeNode foodDelivery=new DefaultMutableTreeNode("Food Delivery");
         root.insert(foodDelivery, 0);
         
-        DefaultMutableTreeNode networkNode;
         DefaultMutableTreeNode organizationNode;
-        //for (int i = 0; i < orgList.size(); i++) {
-        //    organization= orgList.get(i);
-        //    networkNode =new DefaultMutableTreeNode(organization.getName());
-        //    foodDelivery.insert(networkNode, i);
-        //}
+        DefaultMutableTreeNode uaNode;
+        
+        for (int i = 0; i < orgList.size(); i++) {
+            org = orgList.get(i);
+            organizationNode = new DefaultMutableTreeNode(org.getName());
+            foodDelivery.insert(organizationNode, i);
+            
+            uad = org.getUserAccountDirectory().getUserAccountList();
+            for (int j = 0; j < uad.size(); j++) {
+                ua = uad.get(j);
+                uaNode = new DefaultMutableTreeNode(ua.getUsername());
+                organizationNode.insert(uaNode, j);
+            }
+            
+        }
         
         model.reload();
     }
@@ -169,21 +183,21 @@ public class SystemAdminWorkAreaJPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnManageCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManageCustomerActionPerformed
-        ManageCustomerJPanel mcjp = new ManageCustomerJPanel(userProcessContainer, ecosystem);
+        ManageCustomerJPanel mcjp = new ManageCustomerJPanel(userProcessContainer, system);
         userProcessContainer.add("ManageCustomerJPanel", mcjp);
         CardLayout layout = (CardLayout) userProcessContainer.getLayout();
         layout.next(userProcessContainer);
     }//GEN-LAST:event_btnManageCustomerActionPerformed
 
     private void btnManageRestaurantActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManageRestaurantActionPerformed
-        ManageRestaurantJPanel mrjp = new ManageRestaurantJPanel(userProcessContainer, ecosystem);
+        ManageRestaurantJPanel mrjp = new ManageRestaurantJPanel(userProcessContainer, system);
         userProcessContainer.add("ManageRestaurantJPanel", mrjp);
         CardLayout layout = (CardLayout) userProcessContainer.getLayout();
         layout.next(userProcessContainer);
     }//GEN-LAST:event_btnManageRestaurantActionPerformed
 
     private void btnManageDeliveryManActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManageDeliveryManActionPerformed
-        ManageDeliveryManJPanel mdmjp = new ManageDeliveryManJPanel(userProcessContainer, ecosystem);
+        ManageDeliveryManJPanel mdmjp = new ManageDeliveryManJPanel(userProcessContainer, system);
         userProcessContainer.add("ManageDeliveryManJPanel", mdmjp);
         CardLayout layout = (CardLayout) userProcessContainer.getLayout();
         layout.next(userProcessContainer);

@@ -14,6 +14,7 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -31,6 +32,8 @@ public class ManageDeliveryManJPanel extends javax.swing.JPanel {
         initComponents();
         this.userProcessContainer=userProcessContainer;
         this.system=ecosystem;
+        
+        populateTable();
     }
 
     /**
@@ -49,7 +52,7 @@ public class ManageDeliveryManJPanel extends javax.swing.JPanel {
         txtPass = new javax.swing.JTextField();
         btnCreate = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tblDeliverMan = new javax.swing.JTable();
         btnDelete = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -66,12 +69,12 @@ public class ManageDeliveryManJPanel extends javax.swing.JPanel {
             }
         });
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tblDeliverMan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Delivery Man", "username", "password"
+                "Username", "Password", "Delivery Man"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -82,14 +85,19 @@ public class ManageDeliveryManJPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(0).setResizable(false);
-            jTable2.getColumnModel().getColumn(1).setResizable(false);
-            jTable2.getColumnModel().getColumn(2).setResizable(false);
+        jScrollPane2.setViewportView(tblDeliverMan);
+        if (tblDeliverMan.getColumnModel().getColumnCount() > 0) {
+            tblDeliverMan.getColumnModel().getColumn(0).setResizable(false);
+            tblDeliverMan.getColumnModel().getColumn(1).setResizable(false);
+            tblDeliverMan.getColumnModel().getColumn(2).setResizable(false);
         }
 
         btnDelete.setText("Delete");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Admin Manage Delivery Man");
 
@@ -165,6 +173,26 @@ public class ManageDeliveryManJPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void populateTable() {
+        DefaultTableModel model = (DefaultTableModel)tblDeliverMan.getModel();
+        model.setRowCount(0);
+        
+        
+        for (Organization org : system.getOrganizationList()) {
+            if (org.getName().equals("Delivery")) {
+                for (UserAccount ua : org.getUserAccountDirectory().getUserAccountList()) {
+                    Object[] row = new Object[3];
+                    row[0] = ua;
+                    row[1] = ua.getPassword();
+                    row[2] = ua.getEmployee().getName();
+
+                    model.addRow(row);
+                }
+            }
+            
+        }
+    }
+    
     private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
         // TODO add your handling code here:
          if((txtName.getText()).equals("")){
@@ -186,24 +214,19 @@ public class ManageDeliveryManJPanel extends javax.swing.JPanel {
         String username = txtUser.getText();
         String pass = txtPass.getText();
         
-        System.out.println(" create deli man start hhhhhh");
        
         for (Organization org : system.getOrganizationList()) {
-            System.out.println("iiiinnnnn creat deli man");
             if (org.getName().equals("Delivery")) {
-                Employee employee = system.getEmployeeDirectory().createEmployee(deli);
-                UserAccount ua = system.getUserAccountDirectory().createUserAccount(username, pass, employee, new DeliverManRole());
-                JOptionPane.showMessageDialog(null, "Deliver man add successful");
-                
-                //test
-                System.out.println(ua);
-                System.out.println("employee size is " + system.getEmployeeDirectory().getEmployeeList().size());
-                System.out.println(("employee list" + system.getEmployeeDirectory().getEmployeeList().toString()));
-                System.out.println("user accout dir: " + system.getUserAccountDirectory().getUserAccountList());
-                // delete
-                
+                Employee employee = org.getEmployeeDirectory().createEmployee(deli);
+                UserAccount ua = org.getUserAccountDirectory().createUserAccount(username, pass, employee, new DeliverManRole());
+                JOptionPane.showMessageDialog(null, "Deliver man add successful");     
+                populateTable();
             }
         }
+        txtName.setText("");
+        txtPass.setText("");
+        txtUser.setText("");
+        
     }//GEN-LAST:event_btnCreateActionPerformed
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
@@ -217,6 +240,27 @@ public class ManageDeliveryManJPanel extends javax.swing.JPanel {
         layout.previous(userProcessContainer);
     }//GEN-LAST:event_btnBackActionPerformed
 
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
+        int row  = tblDeliverMan.getSelectedRow();
+        if (row <0) {
+            JOptionPane.showMessageDialog(null, "Please select a row from the table first", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        UserAccount selectedUser = (UserAccount)tblDeliverMan.getValueAt(row, 0);
+        
+        for (Organization org : system.getOrganizationList()) {
+            for (UserAccount ua : org.getUserAccountDirectory().getUserAccountList()) {
+                if (ua.equals(selectedUser)) {
+                    org.getUserAccountDirectory().getUserAccountList().remove(selectedUser);
+                    populateTable();
+                    JOptionPane.showMessageDialog(null, "Delete deliver man successful");
+                    break;
+                }
+            }
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBack;
@@ -227,7 +271,7 @@ public class ManageDeliveryManJPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable2;
+    private javax.swing.JTable tblDeliverMan;
     private javax.swing.JTextField txtName;
     private javax.swing.JTextField txtPass;
     private javax.swing.JTextField txtUser;

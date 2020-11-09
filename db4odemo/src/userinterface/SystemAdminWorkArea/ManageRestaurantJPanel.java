@@ -14,6 +14,7 @@ import java.awt.CardLayout;
 import java.awt.Component;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -31,6 +32,8 @@ public class ManageRestaurantJPanel extends javax.swing.JPanel {
         initComponents();
         this.userProcessContainer=userProcessContainer;
         this.system=ecosystem;
+        
+        populateTable();
     }
 
     /**
@@ -43,7 +46,7 @@ public class ManageRestaurantJPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tblRest = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -55,12 +58,12 @@ public class ManageRestaurantJPanel extends javax.swing.JPanel {
         btnDelete = new javax.swing.JButton();
         btnBack = new javax.swing.JButton();
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tblRest.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Restaurant", "username", "password"
+                "Username", "Password", "Restaurant"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -71,11 +74,11 @@ public class ManageRestaurantJPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(0).setResizable(false);
-            jTable2.getColumnModel().getColumn(1).setResizable(false);
-            jTable2.getColumnModel().getColumn(2).setResizable(false);
+        jScrollPane2.setViewportView(tblRest);
+        if (tblRest.getColumnModel().getColumnCount() > 0) {
+            tblRest.getColumnModel().getColumn(0).setResizable(false);
+            tblRest.getColumnModel().getColumn(1).setResizable(false);
+            tblRest.getColumnModel().getColumn(2).setResizable(false);
         }
 
         jLabel2.setText("Admin Manage Restaurants");
@@ -94,6 +97,11 @@ public class ManageRestaurantJPanel extends javax.swing.JPanel {
         });
 
         btnDelete.setText("Delete");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
         btnBack.setText("Back");
         btnBack.addActionListener(new java.awt.event.ActionListener() {
@@ -164,6 +172,26 @@ public class ManageRestaurantJPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void populateTable() {
+        DefaultTableModel model = (DefaultTableModel)tblRest.getModel();
+        model.setRowCount(0);
+        
+        
+        for (Organization org : system.getOrganizationList()) {
+            if (org.getName().equals("RestaurantAdmin")) {
+                for (UserAccount ua : org.getUserAccountDirectory().getUserAccountList()) {
+                    Object[] row = new Object[3];
+                    row[0] = ua;
+                    row[1] = ua.getPassword();
+                    row[2] = ua.getEmployee().getName();
+
+                    model.addRow(row);
+                }
+            }
+            
+        }
+    }
+    
     private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
         // TODO add your handling code here:
         if((txtRest.getText()).equals("")){
@@ -185,23 +213,18 @@ public class ManageRestaurantJPanel extends javax.swing.JPanel {
         String username = txtUser.getText();
         String pass = txtPass.getText();
         
-        System.out.println("rest add start");
        
         for (Organization org : system.getOrganizationList()) {
-            System.out.println("iiiinnnnn rest add");
             if (org.getName().equals("RestaurantAdmin")) {
-                Employee employee = system.getEmployeeDirectory().createEmployee(rest);
-                UserAccount ua = system.getUserAccountDirectory().createUserAccount(username, pass, employee, new AdminRole());
+                Employee employee = org.getEmployeeDirectory().createEmployee(rest);
+                UserAccount ua = org.getUserAccountDirectory().createUserAccount(username, pass, employee, new AdminRole());
                 JOptionPane.showMessageDialog(null, "Add restaurant successful");
-                
-                //test
-                System.out.println(ua);
-                System.out.println("employee size is " + system.getEmployeeDirectory().getEmployeeList().size());
-                System.out.println(("employee list" + system.getEmployeeDirectory().getEmployeeList().toString()));
-                System.out.println("user accout dir: " + system.getUserAccountDirectory().getUserAccountList());
-                // delete
+                populateTable();
             }
         }
+        txtPass.setText("");
+        txtRest.setText("");
+        txtUser.setText("");
     }//GEN-LAST:event_btnCreateActionPerformed
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
@@ -215,6 +238,27 @@ public class ManageRestaurantJPanel extends javax.swing.JPanel {
         layout.previous(userProcessContainer);
     }//GEN-LAST:event_btnBackActionPerformed
 
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
+        int row  = tblRest.getSelectedRow();
+        if (row <0) {
+            JOptionPane.showMessageDialog(null, "Please select a row from the table first", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        UserAccount selectedUser = (UserAccount)tblRest.getValueAt(row, 0);
+        
+        for (Organization org : system.getOrganizationList()) {
+            for (UserAccount ua : org.getUserAccountDirectory().getUserAccountList()) {
+                if (ua.equals(selectedUser)) {
+                    org.getUserAccountDirectory().getUserAccountList().remove(selectedUser);
+                    populateTable();
+                    JOptionPane.showMessageDialog(null, "Delete restaurant successful");
+                    break;
+                }
+            }
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBack;
@@ -225,7 +269,7 @@ public class ManageRestaurantJPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable2;
+    private javax.swing.JTable tblRest;
     private javax.swing.JTextField txtPass;
     private javax.swing.JTextField txtRest;
     private javax.swing.JTextField txtUser;
