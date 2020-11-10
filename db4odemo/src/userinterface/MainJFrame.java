@@ -68,6 +68,7 @@ public class MainJFrame extends javax.swing.JFrame {
                 // delete above
         
         this.setSize(900, 700);
+        this.setLocation(300, 70);
     }
 
     /**

@@ -3,6 +3,7 @@
 package userinterface.RestaurantAdminRole;
 
 
+import Business.EcoSystem;
 import Business.RestaurantAdminOrg;
 import Business.UserAccount.UserAccount;
 import java.awt.CardLayout;
@@ -16,18 +17,21 @@ import userinterface.SystemAdminWorkArea.ManageCustomerJPanel;
 public class AdminWorkAreaJPanel extends javax.swing.JPanel {
     
     JPanel userProcessContainer;
-    private RestaurantAdminOrg org;
+    //private RestaurantAdminOrg org;
     private UserAccount userAccount;
+    private EcoSystem system;
     
     /** Creates new form AdminWorkAreaJPanel */
-    public AdminWorkAreaJPanel(JPanel userProcessContainer, UserAccount ua) {
+    public AdminWorkAreaJPanel(JPanel userProcessContainer, UserAccount ua, EcoSystem system) {
         initComponents();
         this.userProcessContainer = userProcessContainer;
-        this.org = org;
+        //this.org = org;
         this.userAccount = ua;
-        valueLabel.setText(userAccount.getEmployee().getName());
+        this.system = system;
+        
+        setLabel();
+        
       
-        //valueLabel.setText();
     }
     
     /** This method is called from within the constructor to
@@ -83,23 +87,27 @@ public class AdminWorkAreaJPanel extends javax.swing.JPanel {
         add(valueLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 100, 130, -1));
     }// </editor-fold>//GEN-END:initComponents
 
+    public void setLabel() {
+        valueLabel.setText(userAccount.getEmployee().getName());
+    }
+    
     private void btnManageInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManageInfoActionPerformed
         // TODO add your handling code here:
-        ManageRestInfo mrijp = new ManageRestInfo(userProcessContainer);
+        ManageRestInfo mrijp = new ManageRestInfo(userProcessContainer, userAccount);
         userProcessContainer.add("ManageRestInfo", mrijp);
         CardLayout layout = (CardLayout) userProcessContainer.getLayout();
         layout.next(userProcessContainer);
     }//GEN-LAST:event_btnManageInfoActionPerformed
 
     private void btnManageMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManageMenuActionPerformed
-        ManageMenuJPanel mmjp = new ManageMenuJPanel(userProcessContainer);
+        ManageMenuJPanel mmjp = new ManageMenuJPanel(userProcessContainer, userAccount);
         userProcessContainer.add("ManageMenuJPanel", mmjp);
         CardLayout layout = (CardLayout) userProcessContainer.getLayout();
         layout.next(userProcessContainer);
     }//GEN-LAST:event_btnManageMenuActionPerformed
 
     private void btnManageOrdersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManageOrdersActionPerformed
-        MangeOrdersJPanel mojp = new MangeOrdersJPanel(userProcessContainer);
+        MangeOrdersJPanel mojp = new MangeOrdersJPanel(userProcessContainer, userAccount, system);
         userProcessContainer.add("MangeOrdersJPanel", mojp);
         CardLayout layout = (CardLayout) userProcessContainer.getLayout();
         layout.next(userProcessContainer);

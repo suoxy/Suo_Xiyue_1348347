@@ -7,6 +7,8 @@ package Business.UserAccount;
 import Business.Employee.Employee;
 import Business.Role.Role;
 import Business.WorkQueue.WorkQueue;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -19,9 +21,13 @@ public class UserAccount {
     private Employee employee;
     private Role role;
     private WorkQueue workQueue;
+    
+    private ArrayList<String> menu;
 
     public UserAccount() {
         workQueue = new WorkQueue();
+        
+        this.menu = new ArrayList<String>();
     }
     
     
@@ -63,12 +69,14 @@ public class UserAccount {
     }
 
     
-    
+     
     @Override
     public String toString() {
         return username;
     }
-    
-    
-    
+
+    public ArrayList<String> getMenu() {
+        return menu;
+    }
+
 }

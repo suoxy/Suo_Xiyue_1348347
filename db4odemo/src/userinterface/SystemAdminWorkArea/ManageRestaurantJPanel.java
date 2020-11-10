@@ -218,6 +218,7 @@ public class ManageRestaurantJPanel extends javax.swing.JPanel {
             if (org.getName().equals("RestaurantAdmin")) {
                 Employee employee = org.getEmployeeDirectory().createEmployee(rest);
                 UserAccount ua = org.getUserAccountDirectory().createUserAccount(username, pass, employee, new AdminRole());
+                //
                 JOptionPane.showMessageDialog(null, "Add restaurant successful");
                 populateTable();
             }

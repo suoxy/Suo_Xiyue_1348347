@@ -62,7 +62,7 @@ public class SystemAdminWorkAreaJPanel extends javax.swing.JPanel {
             uad = org.getUserAccountDirectory().getUserAccountList();
             for (int j = 0; j < uad.size(); j++) {
                 ua = uad.get(j);
-                uaNode = new DefaultMutableTreeNode(ua.getUsername());
+                uaNode = new DefaultMutableTreeNode(ua.getEmployee().getName());
                 organizationNode.insert(uaNode, j);
             }
             
